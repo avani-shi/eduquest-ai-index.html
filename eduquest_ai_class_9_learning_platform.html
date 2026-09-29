@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDUQUEST AI - Class 9 Master Learning & Mystery Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#0a0a1a',
+                            card: '#13112c',
+                            cardBorder: '#231f4d',
+                            cyan: '#00f3ff',
+                            magenta: '#ff007f',
+                            gold: '#ffcc00',
+                            purple: '#7928ca'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0a1a;
+            color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(121, 40, 202, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(0, 243, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+        .glow-cyan { box-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+        .glow-magenta { box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); }
+        .glow-gold { box-shadow: 0 0 15px rgba(255, 204, 0, 0.4); }
+        .text-glow-cyan { text-shadow: 0 0 8px rgba(0, 243, 255, 0.6); }
+        .text-glow-magenta { text-shadow: 0 0 8px rgba(255, 0, 127, 0.6); }
+        .text-glow-gold { text-shadow: 0 0 8px rgba(255, 204, 0, 0.6); }
+
+        /* Card flip logic */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a1a; }
+        ::-webkit-scrollbar-thumb { background: #231f4d; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7928ca; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-brand-cyan selection:text-black">
+
+    <!-- NAVIGATION & XP HEADER -->
+    <header class="sticky top-0 z-40 bg-brand-bg/90 backdrop-blur-md border-b border-brand-cardBorder">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-purple via-brand-magenta to-brand-cyan flex items-center justify-center p-[2px] shadow-lg">
+                        <div class="w-full h-full bg-brand-bg rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid font-orbitron text-brand-cyan text-xl">EQ</i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="font-orbitron font-extrabold text-lg sm:text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-white to-brand-magenta">
+                            EDUQUEST <span class="text-brand-gold text-xs px-1.5 py-0.5 rounded border border-brand-gold/40">CLASS 9</span>
+                        </h1>
+                        <p class="text-[10px] text-slate-400 font-medium">Interactive AI Academy & Detective Hub</p>
+                    </div>
+                </div>
+
+                <!-- User Stats & Sound Control -->
+                <div class="flex items-center gap-3 sm:gap-6 ml-auto">
+                    <!-- Powerups summary -->
+                    <div class="hidden md:flex items-center gap-2 bg-brand-card/80 border border-brand-cardBorder px-3 py-1.5 rounded-lg text-xs">
+                        <span title="Hint Lens"><i class="fa-solid fa-eye text-brand-cyan"></i> <span id="hdr-hints">2</span></span>
+                        <span class="text-slate-600">|</span>
+                        <span title="Time Freeze"><i class="fa-solid fa-hourglass-half text-brand-gold"></i> <span id="hdr-freezes">1</span></span>
+                    </div>
+
+                    <!-- Level Badge & XP Progress -->
+                    <div class="flex items-center gap-3 bg-brand-card border border-brand-cardBorder px-3 py-1.5 rounded-xl">
+                        <div class="text-right">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <span id="user-level-title" class="text-xs font-bold font-orbitron text-brand-cyan">Lvl 1 Novice Explorer</span>
+                            </div>
+                            <div class="w-28 sm:w-36 bg-slate-800 h-2 rounded-full overflow-hidden mt-1 border border-slate-700/50">
+                                <div id="xp-bar" class="bg-gradient-to-r from-brand-cyan via-brand-magenta to-brand-gold h-full transition-all duration-500 w-[0%]"></div>
+                            </div>
+                            <div class="text-[9px] text-slate-400 mt-0.5 flex justify-between">
+                                <span>XP: <span id="current-xp" class="text-white">0</span></span>
+                                <span><span id="next-level-xp" class="text-brand-gold">200</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio Toggle -->
+                    <button id="sound-btn" onclick="toggleSound()" class="w-9 h-9 rounded-lg bg-brand-card border border-brand-cardBorder hover:border-brand-cyan text-brand-cyan flex items-center justify-center transition-colors" title="Toggle Sound FX">
+                        <i id="sound-icon" class="fa-solid fa-volume-high text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex items-center gap-2 overflow-x-auto pt-3 pb-1 text-xs font-semibold no-scrollbar border-t border-brand-cardBorder/40 mt-2">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/40 whitespace-nowrap">
+                    <i class="fa-solid fa-compass"></i> Dashboard
+                </button>
+                <button onclick="switchTab('mystery')" id="tab-mystery" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 text-slate-300 hover:text-white hover:bg-brand-card whitespace-nowrap">
+                    <i class="fa-solid fa-user-secret text-brand-magenta"></i> Mystery Cases
+                </button>
+                <button onclick="switchTab('brainbattle')" id="tab-brainbattle" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 text-slate-300 hover:text-white hover:bg-brand-card whitespace-nowrap">
+                    <i class="fa-solid fa-bolt text-brand-gold"></i> Brain Battle AI
+                </button>
+                <button onclick="switchTab('aivision')" id="tab-aivision" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 text-slate-300 hover:text-white hover:bg-brand-card whitespace-nowrap">
+                    <i class="fa-solid fa-eye text-brand-cyan"></i> AI Scanner
+                </button>
+                <button onclick="switchTab('flashcards')" id="tab-flashcards" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 text-slate-300 hover:text-white hover:bg-brand-card whitespace-nowrap">
+                    <i class="fa-solid fa-clone text-purple-400"></i> Revision Cards
+                </button>
+                <button onclick="switchTab('studydoctor')" id="tab-studydoctor" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 text-slate-300 hover:text-white hover:bg-brand-card whitespace-nowrap">
+                    <i class="fa-solid fa-user-doctor text-emerald-400"></i> Study Doctor
+                </button>
+                <button onclick="switchTab('leaderboard')" id="tab-leaderboard" class="nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 text-slate-300 hover:text-white hover:bg-brand-card whitespace-nowrap">
+                    <i class="fa-solid fa-trophy text-amber-400"></i> Leaderboard
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINERS -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- TAB 1: DASHBOARD HUB -->
+        <section id="view-dashboard" class="tab-view space-y-6">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl bg-gradient-to-r from-brand-card via-purple-950/40 to-brand-card border border-brand-cardBorder p-6 sm:p-8 overflow-hidden shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-brand-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="px-3 py-1 rounded-full bg-brand-cyan/10 text-brand-cyan text-xs font-bold border border-brand-cyan/30 inline-block mb-3">
+                        <i class="fa-solid fa-sparkles mr-1"></i> Class 9 CBSE / ICSE Interactive System
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-black font-orbitron text-white leading-tight mb-3">
+                        Solve Mysteries, Defeat Bosses & <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan to-brand-magenta">Master Class 9!</span>
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base mb-6 leading-relaxed">
+                        Step into Case #01 across Science, Math, Social Science, and English. Level up your XP from Novice Explorer to EDUQUEST GOD!
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('mystery')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-magenta to-brand-purple hover:brightness-110 text-white font-bold text-sm shadow-lg flex items-center gap-2 transition-transform active:scale-95">
+                            <i class="fa-solid fa-magnifying-glass font-bold"></i> Start Case #01 Mysteries
+                        </button>
+                        <button onclick="switchTab('brainbattle')" class="px-5 py-2.5 rounded-xl bg-brand-card border border-brand-cyan/40 hover:bg-brand-cyan/10 text-brand-cyan font-bold text-sm flex items-center gap-2 transition-transform active:scale-95">
+                            <i class="fa-solid fa-gamepad"></i> Quick Brain Battle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid: Daily Bounties & Progression Overview -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Daily Bounty Quest Board -->
+                <div class="lg:col-span-2 bg-brand-card rounded-2xl border border-brand-cardBorder p-5 sm:p-6 shadow-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-brand-gold text-xl"></i>
+                            <h3 class="font-orbitron font-bold text-lg text-white">Daily Quest Board</h3>
+                        </div>
+                        <span class="text-xs text-slate-400 bg-slate-900/60 px-2.5 py-1 rounded-md border border-slate-800">
+                            Resets Daily
+                        </span>
+                    </div>
+
+                    <div id="quest-list" class="space-y-3">
+                        <!-- Quests injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Level Rank Roadmap Card -->
+                <div class="bg-brand-card rounded-2xl border border-brand-cardBorder p-5 sm:p-6 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-orbitron font-bold text-lg text-white flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-brand-cyan"></i> Class 9 Rank Map
+                            </h3>
+                            <span id="rank-badge-pill" class="text-xs px-2 py-0.5 rounded bg-brand-cyan/20 text-brand-cyan font-semibold border border-brand-cyan/30">
+                                Lvl 1
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-300 mb-4">Earn XP by investigating cases, winning battle quizzes, and completing flashcard sets.</p>
+                        
+                        <!-- Ranks List -->
+                        <div class="space-y-2 max-h-56 overflow-y-auto pr-1 text-xs">
+                            <div id="rank-step-1" class="p-2 rounded-lg bg-brand-cyan/10 border border-brand-cyan/40 flex items-center justify-between text-brand-cyan font-semibold">
+                                <span>L1: Novice Explorer</span>
+                                <span class="text-[10px]">0 XP</span>
+                            </div>
+                            <div id="rank-step-2" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L2: Curious Apprentice</span>
+                                <span class="text-[10px]">200 XP</span>
+                            </div>
+                            <div id="rank-step-3" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L3: Knowledge Warrior</span>
+                                <span class="text-[10px]">500 XP</span>
+                            </div>
+                            <div id="rank-step-4" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L4: Tactical Scholar</span>
+                                <span class="text-[10px]">900 XP</span>
+                            </div>
+                            <div id="rank-step-5" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L5: Grand Mind</span>
+                                <span class="text-[10px]">1400 XP</span>
+                            </div>
+                            <div id="rank-step-6" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L6: Mythic Detective</span>
+                                <span class="text-[10px]">2000 XP</span>
+                            </div>
+                            <div id="rank-step-7" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L7: Master Tactician</span>
+                                <span class="text-[10px]">2700 XP</span>
+                            </div>
+                            <div id="rank-step-8" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L8: Legendary Sage</span>
+                                <span class="text-[10px]">3500 XP</span>
+                            </div>
+                            <div id="rank-step-9" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L9: Supreme Polymath</span>
+                                <span class="text-[10px]">4500 XP</span>
+                            </div>
+                            <div id="rank-step-10" class="p-2 rounded-lg bg-slate-900/50 border border-slate-800 flex items-center justify-between text-slate-400">
+                                <span>L10: EDUQUEST GOD</span>
+                                <span class="text-[10px]">6000 XP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-brand-cardBorder flex items-center justify-between text-xs text-slate-400">
+                        <span>Total Solved Cases: <strong id="dash-solved-count" class="text-brand-magenta">0</strong></span>
+                        <span>Quests Done: <strong id="dash-quest-count" class="text-brand-gold">0/3</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: MYSTERY CASES (Sequential Step 1 -> 5 per Subject) -->
+        <section id="view-mystery" class="tab-view space-y-6 hidden">
+            <!-- Header & Subject Selector -->
+            <div class="bg-brand-card p-5 sm:p-6 rounded-2xl border border-brand-cardBorder shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 text-brand-magenta text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-user-secret"></i> Class 9 Detective Bureau
+                        </div>
+                        <h2 class="text-2xl font-bold font-orbitron text-white">Sequential Mystery File Investigations</h2>
+                        <p class="text-xs text-slate-400 mt-1">Start explicitly at CASE #01 and progress step-by-step through CASE #05 to unlock mystery trophies!</p>
+                    </div>
+
+                    <!-- Subject Picker -->
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="selectMysterySubject('science')" id="msub-science" class="msub-btn px-4 py-2 rounded-xl border border-brand-cyan/40 bg-brand-cyan/20 text-brand-cyan font-bold text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-flask"></i> Science
+                        </button>
+                        <button onclick="selectMysterySubject('math')" id="msub-math" class="msub-btn px-4 py-2 rounded-xl border border-brand-cardBorder bg-brand-card text-slate-400 hover:text-white font-bold text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> Math
+                        </button>
+                        <button onclick="selectMysterySubject('sst')" id="msub-sst" class="msub-btn px-4 py-2 rounded-xl border border-brand-cardBorder bg-brand-card text-slate-400 hover:text-white font-bold text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-landmark"></i> Social Science
+                        </button>
+                        <button onclick="selectMysterySubject('english')" id="msub-english" class="msub-btn px-4 py-2 rounded-xl border border-brand-cardBorder bg-brand-card text-slate-400 hover:text-white font-bold text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> English
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cases Step Timeline / Stepper Header -->
+            <div class="bg-brand-card/70 border border-brand-cardBorder rounded-xl p-4">
+                <div class="flex items-center justify-between max-w-2xl mx-auto text-xs font-bold">
+                    <div id="step-node-1" class="flex flex-col items-center text-brand-cyan">
+                        <div class="w-8 h-8 rounded-full border-2 border-brand-cyan bg-brand-cyan/20 flex items-center justify-center font-orbitron mb-1">1</div>
+                        <span>CASE #01</span>
+                    </div>
+                    <div class="h-0.5 flex-1 bg-slate-700 mx-2"></div>
+                    <div id="step-node-2" class="flex flex-col items-center text-slate-500">
+                        <div class="w-8 h-8 rounded-full border-2 border-slate-700 bg-slate-800 flex items-center justify-center font-orbitron mb-1">2</div>
+                        <span>CASE #02</span>
+                    </div>
+                    <div class="h-0.5 flex-1 bg-slate-700 mx-2"></div>
+                    <div id="step-node-3" class="flex flex-col items-center text-slate-500">
+                        <div class="w-8 h-8 rounded-full border-2 border-slate-700 bg-slate-800 flex items-center justify-center font-orbitron mb-1">3</div>
+                        <span>CASE #03</span>
+                    </div>
+                    <div class="h-0.5 flex-1 bg-slate-700 mx-2"></div>
+                    <div id="step-node-4" class="flex flex-col items-center text-slate-500">
+                        <div class="w-8 h-8 rounded-full border-2 border-slate-700 bg-slate-800 flex items-center justify-center font-orbitron mb-1">4</div>
+                        <span>CASE #04</span>
+                    </div>
+                    <div class="h-0.5 flex-1 bg-slate-700 mx-2"></div>
+                    <div id="step-node-5" class="flex flex-col items-center text-slate-500">
+                        <div class="w-8 h-8 rounded-full border-2 border-slate-700 bg-slate-800 flex items-center justify-center font-orbitron mb-1">5</div>
+                        <span>CASE #05</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Case File Container -->
+            <div id="mystery-active-container" class="bg-brand-card rounded-2xl border border-brand-cardBorder p-6 shadow-2xl relative overflow-hidden">
+                <!-- Top Status Bar (Lives, Clues left, Case ID) -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-brand-cardBorder/60 pb-4 mb-6">
+                    <div>
+                        <span id="case-badge-step" class="px-2.5 py-1 rounded-md bg-brand-magenta/20 border border-brand-magenta/40 text-brand-magenta text-xs font-orbitron font-bold">
+                            STEP 1 : CASE #01
+                        </span>
+                        <h3 id="case-title" class="text-xl font-bold font-orbitron text-white mt-2">Loading Case...</h3>
+                    </div>
+
+                    <div class="flex items-center gap-6">
+                        <!-- Hearts / Lifelines -->
+                        <div class="flex items-center gap-1.5 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+                            <span class="text-xs text-slate-400 font-semibold mr-1">Lives:</span>
+                            <i id="heart-1" class="fa-solid fa-heart text-red-500 text-sm"></i>
+                            <i id="heart-2" class="fa-solid fa-heart text-red-500 text-sm"></i>
+                            <i id="heart-3" class="fa-solid fa-heart text-red-500 text-sm"></i>
+                        </div>
+
+                        <!-- Interactive Clue Button -->
+                        <button onclick="revealCaseClue()" id="clue-btn" class="px-3.5 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-all">
+                            <i class="fa-solid fa-lightbulb"></i> Reveal Clue (<span id="clues-left-count">2</span> left)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Case Story Brief -->
+                <div class="bg-slate-950/60 p-4 sm:p-5 rounded-xl border border-slate-800/80 mb-6">
+                    <p id="case-story" class="text-slate-200 text-sm sm:text-base leading-relaxed italic">
+                        Case loading...
+                    </p>
+                </div>
+
+                <!-- Active Revealed Clues Box -->
+                <div id="case-clues-box" class="hidden mb-6 p-4 rounded-xl bg-amber-950/30 border border-amber-500/30 text-amber-200 text-xs space-y-2">
+                    <div class="font-bold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass font-bold"></i> DECRYPTED EVIDENCE CLUES:
+                    </div>
+                    <ul id="case-clues-list" class="list-disc list-inside space-y-1"></ul>
+                </div>
+
+                <!-- Investigation Question & Choices -->
+                <div class="space-y-4">
+                    <h4 id="case-question" class="text-sm font-bold text-brand-cyan uppercase tracking-wide">
+                        Detective Question...
+                    </h4>
+
+                    <div id="case-options" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Options dynamically injected -->
+                    </div>
+                </div>
+
+                <!-- Case Feedback Panel -->
+                <div id="case-feedback" class="hidden mt-6 p-4 rounded-xl border text-sm flex items-center justify-between">
+                    <div id="case-feedback-text"></div>
+                    <button id="case-next-btn" onclick="nextMysteryStep()" class="px-4 py-2 rounded-lg bg-brand-cyan text-slate-950 font-bold text-xs hover:bg-white transition-colors">
+                        Advance to Next Step <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: BRAIN BATTLE AI (5 Questions + Boss Fight) -->
+        <section id="view-brainbattle" class="tab-view space-y-6 hidden">
+            <div class="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder shadow-xl">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 text-brand-gold text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-bolt"></i> Battle Arena
+                        </div>
+                        <h2 class="text-2xl font-bold font-orbitron text-white">Class 9 Brain Battle & AI Boss Challenge</h2>
+                    </div>
+
+                    <!-- Subject Selector for Quiz -->
+                    <select id="bb-subject-select" onchange="resetBrainBattle()" class="bg-slate-900 border border-brand-cardBorder text-slate-200 text-xs rounded-xl px-3 py-2 font-bold focus:outline-none focus:border-brand-cyan">
+                        <option value="science">Science Arena</option>
+                        <option value="math">Mathematics Arena</option>
+                        <option value="sst">Social Science Arena</option>
+                        <option value="english">English Arena</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-brand-card rounded-2xl border border-brand-cardBorder p-6 shadow-2xl">
+                <!-- Battle Header & Powerups Toolbar -->
+                <div class="flex items-center justify-between border-b border-brand-cardBorder/60 pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <span id="bb-question-num" class="px-3 py-1 rounded-lg bg-brand-gold/20 border border-brand-gold/40 text-brand-gold text-xs font-orbitron font-bold">
+                            STAGE 1 / 5
+                        </span>
+                        <span id="bb-timer" class="text-xs font-mono bg-slate-900 px-2.5 py-1 rounded text-brand-cyan border border-slate-800">
+                            ⏱️ 30s
+                        </span>
+                    </div>
+
+                    <!-- Power-Up Buttons -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="usePowerup('hint')" id="powerup-hint-btn" class="px-3 py-1.5 rounded-lg bg-brand-cyan/10 border border-brand-cyan/40 hover:bg-brand-cyan/20 text-brand-cyan text-xs font-bold transition-all">
+                            👁️ Hint Lens (<span id="p-hint-count">2</span>)
+                        </button>
+                        <button onclick="usePowerup('freeze')" id="powerup-freeze-btn" class="px-3 py-1.5 rounded-lg bg-brand-gold/10 border border-brand-gold/40 hover:bg-brand-gold/20 text-brand-gold text-xs font-bold transition-all">
+                            ⏳ Time Freeze (<span id="p-freeze-count">1</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question Area -->
+                <div class="mb-6">
+                    <h3 id="bb-question-text" class="text-lg font-semibold text-white leading-relaxed">
+                        Loading question...
+                    </h3>
+                </div>
+
+                <!-- Answer Grid -->
+                <div id="bb-options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                    <!-- Options injected dynamically -->
+                </div>
+
+                <!-- Result Message & Boss Visual -->
+                <div id="bb-feedback" class="hidden p-4 rounded-xl border text-sm font-semibold mb-4"></div>
+
+                <div class="flex justify-end">
+                    <button id="bb-next-btn" onclick="nextBrainQuestion()" class="hidden px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-cyan to-brand-purple text-slate-950 font-extrabold text-xs hover:brightness-110 shadow-lg">
+                        Next Challenge <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: AI SCANNER & VISION -->
+        <section id="view-aivision" class="tab-view space-y-6 hidden">
+            <div class="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder shadow-xl">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 text-brand-cyan text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-eye"></i> Visual AI
+                        </div>
+                        <h2 class="text-2xl font-bold font-orbitron text-white">Class 9 AI Diagram & Concept Scanner</h2>
+                        <p class="text-xs text-slate-400 mt-1">Select or upload any Class 9 educational diagram for immediate AI visual breakdown.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Preset Samples Picker -->
+                <div class="lg:col-span-4 bg-brand-card rounded-2xl border border-brand-cardBorder p-5 shadow-xl space-y-4">
+                    <h3 class="font-orbitron font-bold text-sm text-white border-b border-brand-cardBorder pb-2">Select Class 9 Sample Diagram</h3>
+                    
+                    <div class="space-y-2">
+                        <button onclick="scanSample('leaf')" class="w-full p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-brand-cyan text-left transition-all flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-900/40 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">Plant Cell / Stomata</div>
+                                <div class="text-[10px] text-slate-400">Science - Photosynthesis</div>
+                            </div>
+                        </button>
+
+                        <button onclick="scanSample('math')" class="w-full p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-brand-cyan text-left transition-all flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-blue-900/40 border border-blue-500/40 flex items-center justify-center text-blue-400">
+                                <i class="fa-solid fa-shapes"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">Right Triangle Geometry</div>
+                                <div class="text-[10px] text-slate-400">Mathematics - Pythagoras Theorem</div>
+                            </div>
+                        </button>
+
+                        <button onclick="scanSample('sst')" class="w-full p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-brand-cyan text-left transition-all flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-amber-900/40 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                                <i class="fa-solid fa-scroll"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">Preamble of India</div>
+                                <div class="text-[10px] text-slate-400">Social Science - Democratic Rights</div>
+                            </div>
+                        </button>
+
+                        <button onclick="scanSample('english')" class="w-full p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-brand-cyan text-left transition-all flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-900/40 border border-purple-500/40 flex items-center justify-center text-purple-400">
+                                <i class="fa-solid fa-feather-pointed"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">Poetic Metaphor Chart</div>
+                                <div class="text-[10px] text-slate-400">English - Beehive Poems</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Simulated Custom File Upload Button -->
+                    <div class="pt-2">
+                        <label class="block w-full text-center py-3 rounded-xl border border-dashed border-brand-cyan/50 hover:bg-brand-cyan/10 cursor-pointer transition-colors text-xs font-bold text-brand-cyan">
+                            <i class="fa-solid fa-upload mr-1"></i> Upload Custom Diagram
+                            <input type="file" accept="image/*" class="hidden" onchange="handleFileUpload(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Analysis Display Box -->
+                <div class="lg:col-span-8 bg-brand-card rounded-2xl border border-brand-cardBorder p-6 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-brand-cardBorder pb-3 mb-4">
+                            <h3 id="vision-title" class="font-orbitron font-bold text-lg text-white">AI Vision Analysis Engine</h3>
+                            <span id="vision-tag" class="text-xs px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-brand-cyan font-bold">
+                                Ready to Scan
+                            </span>
+                        </div>
+
+                        <!-- Image Preview Slot -->
+                        <div id="vision-image-slot" class="w-full h-48 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center mb-4 overflow-hidden relative">
+                            <i id="vision-placeholder-icon" class="fa-solid fa-microscope text-4xl text-slate-700"></i>
+                            <img id="vision-preview-img" class="hidden w-full h-full object-contain" src="" alt="Diagram Scan">
+                        </div>
+
+                        <!-- Output Breakdown -->
+                        <div id="vision-analysis-body" class="text-xs text-slate-300 space-y-3 leading-relaxed">
+                            <p class="italic text-slate-500 text-center py-4">Select a diagram from the left panel to trigger the AI breakdown.</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div id="vision-actions" class="hidden pt-4 border-t border-brand-cardBorder flex flex-wrap gap-2">
+                        <button onclick="visionExplainMore()" class="px-3.5 py-2 rounded-lg bg-brand-cyan/10 border border-brand-cyan/30 text-brand-cyan text-xs font-bold hover:bg-brand-cyan/20">
+                            🔍 Explain Further
+                        </button>
+                        <button onclick="visionRealExample()" class="px-3.5 py-2 rounded-lg bg-brand-magenta/10 border border-brand-magenta/30 text-brand-magenta text-xs font-bold hover:bg-brand-magenta/20">
+                            💡 Real-Life Application
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: FLASHCARDS ARENA -->
+        <section id="view-flashcards" class="tab-view space-y-6 hidden">
+            <div class="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder shadow-xl">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-clone"></i> Rapid Revision
+                        </div>
+                        <h2 class="text-2xl font-bold font-orbitron text-white">Class 9 Interactive Flashcard Vault</h2>
+                        <p class="text-xs text-slate-400 mt-1">Tap card to flip between Question and Explanation. Earn +20 XP per flip study!</p>
+                    </div>
+
+                    <!-- Subject Selector -->
+                    <div class="flex gap-2">
+                        <button onclick="loadFlashcardSubject('science')" id="fc-sub-science" class="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-bold">Science</button>
+                        <button onclick="loadFlashcardSubject('math')" id="fc-sub-math" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-xs font-bold">Math</button>
+                        <button onclick="loadFlashcardSubject('sst')" id="fc-sub-sst" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-xs font-bold">SST</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flashcard Display Area -->
+            <div class="max-w-xl mx-auto">
+                <div id="flashcard-box" onclick="flipFlashcard()" class="perspective-1000 w-full h-72 cursor-pointer">
+                    <div id="flashcard-inner" class="relative w-full h-full duration-500 transform-style-3d bg-brand-card rounded-2xl border-2 border-brand-purple p-8 flex flex-col items-center justify-center text-center shadow-2xl">
+                        <!-- Front side -->
+                        <div class="absolute inset-0 backface-hidden p-6 flex flex-col items-center justify-center">
+                            <span class="text-xs font-bold text-brand-purple uppercase tracking-widest mb-2" id="fc-category">SCIENCE FLASHCARD</span>
+                            <h3 id="fc-question" class="text-xl font-bold text-white leading-relaxed">
+                                Click to reveal term...
+                            </h3>
+                            <p class="text-[10px] text-slate-500 mt-6"><i class="fa-solid fa-rotate mr-1"></i> Click anywhere on card to Flip</p>
+                        </div>
+                        <!-- Back side -->
+                        <div class="absolute inset-0 backface-hidden rotate-y-180 p-6 flex flex-col items-center justify-center bg-slate-950 rounded-2xl">
+                            <span class="text-xs font-bold text-brand-cyan uppercase tracking-widest mb-2">ANSWER / EXPLANATION</span>
+                            <p id="fc-answer" class="text-sm font-semibold text-slate-200 leading-relaxed">
+                                Flip answer content...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flashcard Nav Controls -->
+                <div class="flex items-center justify-between mt-6">
+                    <button onclick="prevFlashcard()" class="px-4 py-2 rounded-xl bg-brand-card border border-brand-cardBorder text-slate-300 text-xs font-bold hover:text-white">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Previous
+                    </button>
+                    <span id="fc-counter" class="text-xs font-orbitron text-brand-gold">1 / 5</span>
+                    <button onclick="nextFlashcard()" class="px-4 py-2 rounded-xl bg-brand-card border border-brand-cardBorder text-slate-300 text-xs font-bold hover:text-white">
+                        Next <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: STUDY DOCTOR -->
+        <section id="view-studydoctor" class="tab-view space-y-6 hidden">
+            <div class="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder shadow-xl">
+                <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-user-doctor"></i> AI Study Doctor
+                </div>
+                <h2 class="text-2xl font-bold font-orbitron text-white">Class 9 Exam Prep & Timetable Generator</h2>
+                <p class="text-xs text-slate-400 mt-1">Input your upcoming target to receive a tailored routine and focus countdown timer.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Timetable Form -->
+                <div class="bg-brand-card rounded-2xl border border-brand-cardBorder p-5 shadow-xl space-y-4">
+                    <h3 class="font-orbitron font-bold text-sm text-white">Generate Custom Revision Schedule</h3>
+                    
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Select Priority Subject</label>
+                        <select id="sd-subject" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
+                            <option value="Science (Physics, Chemistry, Biology)">Science (Matter, Cells, Motion)</option>
+                            <option value="Mathematics (Algebra, Geometry)">Mathematics (Polynomials, Triangles)</option>
+                            <option value="Social Science (History, Civics)">Social Science (French Rev, Constitution)</option>
+                            <option value="English Literature & Grammar">English Literature & Grammar</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Daily Study Hours</label>
+                            <input id="sd-hours" type="number" min="1" max="8" value="2" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Days Until Exam</label>
+                            <input id="sd-days" type="number" min="1" max="90" value="14" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
+                        </div>
+                    </div>
+
+                    <button onclick="generateTimetable()" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 font-bold text-xs text-slate-950 hover:brightness-110">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Generate AI Study Prescription
+                    </button>
+                </div>
+
+                <!-- Live Focus Timer Widget -->
+                <div class="bg-brand-card rounded-2xl border border-brand-cardBorder p-5 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-orbitron font-bold text-sm text-white mb-2">Focus Pomodoro Timer</h3>
+                        <p class="text-xs text-slate-400 mb-6">Start a uninterrupted 25-minute study sprint to gain +50 XP!</p>
+                        
+                        <div class="text-center my-6">
+                            <div id="timer-display" class="font-orbitron text-5xl font-black text-brand-cyan tracking-widest">25:00</div>
+                            <div class="text-xs text-slate-400 mt-2 font-semibold">Class 9 Sprint Session</div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button id="timer-toggle-btn" onclick="toggleStudyTimer()" class="flex-1 py-3 rounded-xl bg-brand-cyan text-slate-950 font-extrabold text-xs">
+                            <i class="fa-solid fa-play mr-1"></i> Start Focus Timer
+                        </button>
+                        <button onclick="resetStudyTimer()" class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Output Schedule Area -->
+            <div id="timetable-output" class="hidden bg-brand-card rounded-2xl border border-brand-cardBorder p-6 shadow-xl space-y-3">
+                <h3 class="font-orbitron font-bold text-base text-brand-cyan">📋 Prescribed Study Roadmap</h3>
+                <div id="timetable-body" class="text-xs text-slate-300 space-y-2 leading-relaxed"></div>
+            </div>
+        </section>
+
+        <!-- TAB 7: LEADERBOARD -->
+        <section id="view-leaderboard" class="tab-view space-y-6 hidden">
+            <div class="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder shadow-xl">
+                <div class="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
+                    <i class="fa-solid fa-trophy"></i> School Leaderboard
+                </div>
+                <h2 class="text-2xl font-bold font-orbitron text-white">Class 9 Global Ranks & Rivals</h2>
+            </div>
+
+            <div class="bg-brand-card rounded-2xl border border-brand-cardBorder p-6 shadow-xl">
+                <div class="space-y-3" id="leaderboard-list">
+                    <!-- Dynamic Leaderboard Items -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LEVEL UP CELEBRATION MODAL -->
+    <div id="level-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gradient-to-b from-brand-card to-slate-950 border-2 border-brand-gold rounded-3xl p-8 max-w-md w-full text-center relative overflow-hidden shadow-2xl animate-bounce-short">
+            <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 bg-brand-gold/30 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 text-4xl font-black shadow-lg">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+
+            <h3 class="text-xs font-bold font-orbitron text-brand-gold tracking-widest uppercase mb-1">LEVEL UP ACHIEVED!</h3>
+            <h2 id="modal-level-name" class="text-2xl font-black text-white font-orbitron mb-2">L2: Curious Apprentice</h2>
+            <p id="modal-level-desc" class="text-xs text-slate-300 mb-6">You've unlocked new Detective privileges and 1x Hint Lens Power-Up!</p>
+
+            <button onclick="closeLevelModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-gold via-amber-400 to-brand-gold text-slate-950 font-black font-orbitron text-sm shadow-xl hover:brightness-110">
+                CLAIM REWARDS & CONTINUE
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-brand-cardBorder/40 bg-brand-card/40 py-4 text-center text-xs text-slate-500">
+        <p>EDUQUEST AI © Class 9 Interactive Curriculum Portal • Powered by Web Audio Synthesis</p>
+    </footer>
+
+    <script>
+        /* ----------------------------------------------------
+           1. GAME STATE & LOCAL STORAGE
+           ---------------------------------------------------- */
+        let gameState = {
+            xp: 0,
+            level: 1,
+            solvedCount: 0,
+            completedQuests: [false, false, false],
+            powerups: { hints: 2, freezes: 1 },
+            soundEnabled: true,
+            mysterySubject: 'science',
+            mysteryStep: 1, // 1 to 5
+            mysteryLives: 3,
+            mysteryCluesLeft: 2,
+            revealedClues: []
+        };
+
+        const LEVEL_THRESHOLDS = [
+            { lvl: 1, name: "Novice Explorer", xpReq: 0 },
+            { lvl: 2, name: "Curious Apprentice", xpReq: 200 },
+            { lvl: 3, name: "Knowledge Warrior", xpReq: 500 },
+            { lvl: 4, name: "Tactical Scholar", xpReq: 900 },
+            { lvl: 5, name: "Grand Mind", xpReq: 1400 },
+            { lvl: 6, name: "Mythic Detective", xpReq: 2000 },
+            { lvl: 7, name: "Master Tactician", xpReq: 2700 },
+            { lvl: 8, name: "Legendary Sage", xpReq: 3500 },
+            { lvl: 9, name: "Supreme Polymath", xpReq: 4500 },
+            { lvl: 10, name: "EDUQUEST GOD", xpReq: 6000 }
+        ];
+
+        /* ----------------------------------------------------
+           2. AUDIO SYNTHESIZER (Web Audio API - No External Assets)
+           ---------------------------------------------------- */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(180, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'levelup') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(554.37, now + 0.1);
+                    osc.frequency.setValueAtTime(659.25, now + 0.2);
+                    osc.frequency.setValueAtTime(880, now + 0.3);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
+            } catch (e) {
+                console.log("Audio play suppressed:", e);
+            }
+        }
+
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (gameState.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-sm";
+                playSound('click');
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-sm text-slate-500";
+            }
+        }
+
+        /* ----------------------------------------------------
+           3. MYSTERY DATABASE (Sequential Cases Step 1 -> 5)
+           ---------------------------------------------------- */
+        const MYSTERY_DATABASE = {
+            science: [
+                {
+                    step: 1,
+                    title: "CASE #01: The Vanishing Plasma membrane",
+                    story: "An alien microscopic probe dissolved a cell wall in the school biology lab! The organelles are spilling out. How can the cell seal its outer boundary?",
+                    clues: ["Look for a lipid bilayer structure.", "Cell walls exist in plants, but plasma membrane exists in both."],
+                    question: "Which component acts as the selectively permeable barrier of all Class 9 biological cells?",
+                    options: ["Cell Wall", "Plasma Membrane", "Cytoplasm", "Vacuole Membrane"],
+                    correct: 1,
+                    explanation: "Correct! The plasma membrane is selectively permeable and protects the internal organelles."
+                },
+                {
+                    step: 2,
+                    title: "CASE #02: The Runaway Speedboat",
+                    story: "A boat on the lake accelerates uniformly from rest to 20 m/s in 5 seconds. The police need to know its exact acceleration rate to trace its motor force.",
+                    clues: ["Use Formula: Acceleration (a) = (v - u) / t", "Initial velocity u = 0, final velocity v = 20, time t = 5."],
+                    question: "What is the boat's acceleration rate?",
+                    options: ["2 m/s²", "4 m/s²", "5 m/s²", "10 m/s²"],
+                    correct: 1,
+                    explanation: "Spot on! a = (20 - 0)/5 = 4 m/s²."
+                },
+                {
+                    step: 3,
+                    title: "CASE #03: The Ghostly Sublimation Chamber",
+                    story: "A mystery white solid in a beaker directly transformed into gas upon heating without turning into liquid first. Laboratory security asks what chemical event occurred.",
+                    clues: ["Camphor and Ammonium Chloride exhibit this.", "It bypasses the liquid state entirely."],
+                    question: "What is this phase transition called?",
+                    options: ["Evaporation", "Sublimation", "Condensation", "Deposition"],
+                    correct: 1,
+                    explanation: "Correct! Sublimation is the direct change from solid to gaseous state."
+                },
+                {
+                    step: 4,
+                    title: "CASE #04: The Missing Inertia Anomaly",
+                    story: "A passenger standing in a moving bus falls forward when the driver hits the brakes suddenly. The detective must explain the physics rule behind this to the court.",
+                    clues: ["Newton's First Law of Motion.", "Objects tend to remain in motion unless acted upon."],
+                    question: "Which concept keeps the passenger moving forward?",
+                    options: ["Inertia of Rest", "Inertia of Motion", "Centripetal Force", "Gravitational Pull"],
+                    correct: 1,
+                    explanation: "Correct! Inertia of motion keeps the body moving forward when brakes are applied."
+                },
+                {
+                    step: 5,
+                    title: "CASE #05: The Isotope Identity Mystery",
+                    story: "An unknown element sample has two atomic forms with identical atomic numbers but different mass numbers. Chemists need the precise term.",
+                    clues: ["Same proton number, different neutron count.", "Examples include Hydrogen, Deuterium, Tritium."],
+                    question: "What are these atomic variants called?",
+                    options: ["Isobars", "Isotopes", "Allotropes", "Isomers"],
+                    correct: 1,
+                    explanation: "Masterful detective work! Isotopes have the same atomic number but different mass numbers."
+                }
+            ],
+            math: [
+                {
+                    step: 1,
+                    title: "CASE #01: The Irrational Cipher",
+                    story: "A secret Vault door requires inputting a number that CANNOT be expressed as a ratio p/q (where p and q are integers and q ≠ 0).",
+                    clues: ["Rational numbers can be fractions.", "Square roots of non-perfect squares are irrational."],
+                    question: "Which of these code keys is an Irrational Number?",
+                    options: ["3/5", "√4", "√7", "0.75"],
+                    correct: 2,
+                    explanation: "Correct! √7 cannot be written in p/q form and has a non-terminating non-repeating expansion."
+                },
+                {
+                    step: 2,
+                    title: "CASE #02: The Zero of Polynomial Vault",
+                    story: "To disable the laser grid, solve for x in the linear polynomial equation P(x) = 3x - 12.",
+                    clues: ["Set P(x) = 0.", "3x - 12 = 0 => 3x = 12."],
+                    question: "What value of x zeroes out the laser grid?",
+                    options: ["x = 3", "x = 4", "x = -4", "x = 12"],
+                    correct: 1,
+                    explanation: "Correct! 3(4) - 12 = 0."
+                },
+                {
+                    step: 3,
+                    title: "CASE #03: The Quadrant Coordinate Code",
+                    story: "A hidden transmitter is located at point P(-5, 4) on the radar cartesian plane. In which quadrant is it hidden?",
+                    clues: ["Quadrant I: (+,+), Quadrant II: (-,+)", "Quadrant III: (-,-), Quadrant IV: (+,-)"],
+                    question: "Identify the quadrant for P(-5, 4):",
+                    options: ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"],
+                    correct: 1,
+                    explanation: "Correct! Negative x and positive y values lie in Quadrant II."
+                },
+                {
+                    step: 4,
+                    title: "CASE #04: The Parallel Line Angle Mystery",
+                    story: "Two parallel railway tracks are crossed by a transversal beam. If interior angle A is 65°, what is its consecutive interior angle B?",
+                    clues: ["Consecutive interior angles on the same side are supplementary.", "Sum = 180°."],
+                    question: "Calculate Angle B:",
+                    options: ["65°", "115°", "125°", "180°"],
+                    correct: 1,
+                    explanation: "Correct! 180° - 65° = 115°."
+                },
+                {
+                    step: 5,
+                    title: "CASE #05: Heron's Formula Area Puzzle",
+                    story: "A triangular plot of land has sides 3m, 4m, and 5m. Detectives must calculate its area using Heron's formula.",
+                    clues: ["Semi-perimeter s = (3+4+5)/2 = 6.", "Area = √(s(s-a)(s-b)(s-c)) = √(6×3×2×1)."],
+                    question: "What is the exact area of the triangular plot?",
+                    options: ["6 m²", "12 m²", "15 m²", "20 m²"],
+                    correct: 0,
+                    explanation: "Brilliant! √(36) = 6 m²."
+                }
+            ],
+            sst: [
+                {
+                    step: 1,
+                    title: "CASE #01: The Storming of the Bastille",
+                    story: "In July 1789, Parisian citizens stormed a state prison fortress looking for gunpowder. What event did this trigger?",
+                    clues: ["Happened in 1789 in France.", "Led to the downfall of Louis XVI."],
+                    question: "This historical event marked the start of:",
+                    options: ["Industrial Revolution", "French Revolution", "Russian Revolution", "American Independence"],
+                    correct: 1,
+                    explanation: "Correct! The storming of the Bastille on July 14, 1789, started the French Revolution."
+                },
+                {
+                    step: 2,
+                    title: "CASE #02: The Preamble Keyword Key",
+                    story: "A constitutional document requires selecting the keyword that means citizens have supreme right to make decisions without external control.",
+                    clues: ["It starts with 'S'.", "It implies independent authority."],
+                    question: "Which word defines this ultimate authority?",
+                    options: ["Secular", "Socialist", "Sovereign", "Republic"],
+                    correct: 2,
+                    explanation: "Correct! Sovereign means independent without outside control."
+                },
+                {
+                    step: 3,
+                    title: "CASE #03: The Northern Plains Formation",
+                    story: "Geologists are investigating how the vast fertile Northern Plains of India were formed over millions of years.",
+                    clues: ["Formed by three major river systems: Indus, Ganga, and Brahmaputra.", "Deposit rich silt."],
+                    question: "Which soil type primarily makes up the Northern Plains?",
+                    options: ["Black Soil", "Alluvial Soil", "Red Soil", "Arid Soil"],
+                    correct: 1,
+                    explanation: "Correct! Alluvial soil deposited by rivers makes the Northern Plains extremely fertile."
+                },
+                {
+                    step: 4,
+                    title: "CASE #04: Palampur Capital Mystery",
+                    story: "In the study of Village Palampur, small farmers need seeds, fertilizers, and tools. What form of capital do tools and machines represent?",
+                    clues: ["They last over many years.", "Contrasted with working capital like cash."],
+                    question: "Tools and machinery are categorized as:",
+                    options: ["Working Capital", "Fixed Capital", "Human Capital", "Financial Debt"],
+                    correct: 1,
+                    explanation: "Correct! Tools, generators, and machines are Fixed Capital."
+                },
+                {
+                    step: 5,
+                    title: "CASE #05: The October Revolution Clue",
+                    story: "In October 1917, Vladimir Lenin led a party to seize political power in Russia. Detective history archives need the group name.",
+                    clues: ["Led by Lenin.", "Opposed the Provisional Government."],
+                    question: "Who were these revolutionaries?",
+                    options: ["Mensheviks", "Bolsheviks", "Jacobins", "Liberals"],
+                    correct: 1,
+                    explanation: "Excellent! The Bolsheviks led the 1917 Russian October Revolution."
+                }
+            ],
+            english: [
+                {
+                    step: 1,
+                    title: "CASE #01: The Mechanical Teacher Malfunction",
+                    story: "In 'The Fun They Had', Margie and Tommy discover a printed real paper book from 2157. What was wrong with Margie's teacher?",
+                    clues: ["It wasn't a human teacher.", "The geography sector was geared too fast."],
+                    question: "Margie's teacher was a:",
+                    options: ["Human Professor", "Mechanical Telebook", "County Inspector", "Alien AI"],
+                    correct: 1,
+                    explanation: "Correct! Margie had a computerized mechanical teacher."
+                },
+                {
+                    step: 2,
+                    title: "CASE #02: The Road Not Taken Metaphor",
+                    story: "Robert Frost stands at a fork in yellow woods deciding which path to travel.",
+                    clues: ["The two roads represent life choices.", "Taking the less traveled one made all the difference."],
+                    question: "What do the two diverging roads symbolize?",
+                    options: ["Physical Hiking Trails", "Life Choices and Decisions", "Seasons of the Year", "School Subjects"],
+                    correct: 1,
+                    explanation: "Correct! The roads symbolize choices that shape our life journey."
+                },
+                {
+                    step: 3,
+                    title: "CASE #03: The Lost Child's Wish",
+                    story: "A child at the fair desires toys, sweets, and flowers. But when he gets separated from his parents, what is his only request?",
+                    clues: ["Written by Mulk Raj Anand.", "He rejects all gifts when lost."],
+                    question: "What does the child want most when lost?",
+                    options: ["Jalebis & Toys", "To see the snake charmer", "His Mother and Father", "A rides on the roundabout"],
+                    correct: 2,
+                    explanation: "Correct! The child only wanted his parents."
+                },
+                {
+                    step: 4,
+                    title: "CASE #04: Passive Voice Encryption",
+                    story: "Convert this active statement into grammatically sound passive voice: 'The detective solved the case.'",
+                    clues: ["Subject becomes object.", "Use 'was solved by'."],
+                    question: "Which passive construction is correct?",
+                    options: ["The case is solved by the detective.", "The case was solved by the detective.", "The case had solved the detective.", "The detective was solving the case."],
+                    correct: 1,
+                    explanation: "Correct! Simple past active converts to 'was solved by'."
+                },
+                {
+                    step: 5,
+                    title: "CASE #05: The Binsar Rain Legend",
+                    story: "In 'The Sound of Music', Evelyn Glennie mastered percussion despite profound hearing loss. How did she perceive sound?",
+                    clues: ["She didn't use her ears directly.", "Felt vibrations through her body."],
+                    question: "How did Evelyn feel musical notes?",
+                    options: ["By lip reading", "Through vibrations in her barefoot body", "By reading sheet music only", "Using hearing aid technology"],
+                    correct: 1,
+                    explanation: "Outstanding detective skills! Evelyn Glennie senses music through vibrations in her body."
+                }
+            ]
+        };
+
+        /* ----------------------------------------------------
+           4. BRAIN BATTLE DATABASE & FLASHCARDS
+           ---------------------------------------------------- */
+        const BRAIN_BATTLE_QUESTIONS = {
+            science: [
+                { q: "What is the SI unit of acceleration?", opts: ["m/s", "m/s²", "kg·m/s", "N/m"], ans: 1 },
+                { q: "Which organelle is known as the powerhouse of the cell?", opts: ["Golgi Body", "Mitochondria", "Lysosome", "Ribosome"], ans: 1 },
+                { q: "What happens to the rate of evaporation when humidity increases?", opts: ["Increases", "Decreases", "Remains same", "Stops instantly"], ans: 1 },
+                { q: "According to Universal Law of Gravitation, force F is inversely proportional to:", opts: ["Distance r", "Square of distance (r²)", "Mass sum", "Velocity"], ans: 1 },
+                { q: "Which of the following is a homogeneous mixture?", opts: ["Chalk in water", "Sugar dissolved in water", "Muddy water", "Oil in water"], ans: 1 }
+            ],
+            math: [
+                { q: "What is the degree of a non-zero constant polynomial?", opts: ["0", "1", "2", "Undefined"], ans: 0 },
+                { q: "If two angles are complementary, their sum is:", opts: ["180°", "90°", "360°", "60°"], ans: 1 },
+                { q: "The coordinate of the origin is:", opts: ["(1,1)", "(0,1)", "(0,0)", "(1,0)"], ans: 2 },
+                { q: "In a right triangle with legs 6 cm and 8 cm, the hypotenuse is:", opts: ["10 cm", "12 cm", "14 cm", "100 cm"], ans: 0 },
+                { q: "Linear equation 2x + 3y = 6 cuts the x-axis at:", opts: ["(0,2)", "(3,0)", "(2,3)", "(6,0)"], ans: 1 }
+            ],
+            sst: [
+                { q: "Who wrote 'The Spirit of the Laws' suggesting division of power?", opts: ["Rousseau", "Montesquieu", "John Locke", "Voltaire"], ans: 1 },
+                { q: "Which river is also known as 'Dakshin Ganga'?", opts: ["Godavari", "Krishna", "Narmada", "Kaveri"], ans: 0 },
+                { q: "How many fundamental rights are guaranteed in Indian Constitution?", opts: ["5", "6", "7", "8"], ans: 1 },
+                { q: "What is the main economic activity in village Palampur?", opts: ["Manufacturing", "Farming", "Dairy", "Transport"], ans: 1 },
+                { q: "The western coastal strip south of Goa is referred to as:", opts: ["Coromandel", "Kannad", "Konkan", "Northern Circar"], ans: 1 }
+            ],
+            english: [
+                { q: "In 'The Road Not Taken', what color were the woods?", opts: ["Green", "Yellow", "Red", "Brown"], ans: 1 },
+                { q: "Who is the author of 'The Lost Child'?", opts: ["Mulk Raj Anand", "Ruskin Bond", "Isaac Asimov", "A.P.J. Abdul Kalam"], ans: 0 },
+                { q: "Identify the figure of speech: 'The wind came howling through the trees.'", opts: ["Simile", "Personification", "Metaphor", "Oxymoron"], ans: 1 },
+                { q: "Choose correct indirect speech: He said, 'I am reading.'", opts: ["He said he is reading.", "He said that he was reading.", "He told he was reading.", "He says he read."], ans: 1 },
+                { q: "What instrument did Bismillah Khan master?", opts: ["Flute", "Sitar", "Shehnai", "Tabla"], ans: 2 }
+            ]
+        };
+
+        const FLASHCARD_DATA = {
+            science: [
+                { q: "Define Inertia.", a: "The inherent natural tendency of an object to resist changes in its state of rest or uniform motion." },
+                { q: "What is Endoplasmic Reticulum (ER)?", a: "A large network of membrane-bound tubes. Rough ER has ribosomes for protein synthesis; Smooth ER makes lipids." },
+                { q: "State Newton's Second Law Formula.", a: "Force = Mass × Acceleration (F = m × a). Unit: Newton (N)." },
+                { q: "What is Latent Heat of Vaporisation?", a: "Heat energy required to change 1 kg of liquid to gas at atmospheric pressure at its boiling point." },
+                { q: "Difference between Prokaryotic & Eukaryotic cells?", a: "Prokaryotes lack a defined nuclear membrane; Eukaryotes have a well-defined membrane-bound nucleus." }
+            ],
+            math: [
+                { q: "What is Heron's Formula?", a: "Area = √(s(s-a)(s-b)(s-c)), where semi-perimeter s = (a + b + c) / 2." },
+                { q: "State the Remainder Theorem.", a: "If P(x) is divided by (x - a), the remainder is equal to P(a)." },
+                { q: "What are Co-interior Angles?", a: "Angles on the same side of a transversal inside two parallel lines. They add up to 180°." },
+                { q: "What is the Distance Formula on a Number Line?", a: "Distance between point A and B is |b - a|." },
+                { q: "Define Right Circular Cone Volume.", a: "Volume = (1/3) × π × r² × h." }
+            ],
+            sst: [
+                { q: "What was Third Estate in French Society?", a: "Comprised commoners, peasants, merchants, and lawyers who paid all taxes (Taille)." },
+                { q: "Define Universal Adult Suffrage.", a: "Every adult citizen aged 18+ has the right to vote regardless of wealth, gender, or religion." },
+                { q: "What is a Peninsula?", a: "A landmass surrounded by sea water on three sides (e.g., Peninsular India)." },
+                { q: "Difference between Fixed and Working Capital?", a: "Fixed: Tools/machines lasting years. Working: Raw materials/cash used up in production." },
+                { q: "What is 'MSP' in Food Security?", a: "Minimum Support Price - guaranteed price declared by Government before sowing season." }
+            ]
+        };
+
+        /* ----------------------------------------------------
+           5. TAB SWITCHING LOGIC
+           ---------------------------------------------------- */
+        function switchTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.className = "nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 text-slate-300 hover:text-white hover:bg-brand-card whitespace-nowrap";
+            });
+
+            const activeView = document.getElementById('view-' + tabId);
+            const activeNav = document.getElementById('tab-' + tabId);
+
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeNav) {
+                activeNav.className = "nav-tab px-3.5 py-1.5 rounded-lg flex items-center gap-2 bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/40 whitespace-nowrap";
+            }
+
+            if (tabId === 'mystery') loadMysteryCase();
+            if (tabId === 'brainbattle') resetBrainBattle();
+            if (tabId === 'flashcards') loadFlashcardSubject('science');
+            if (tabId === 'leaderboard') renderLeaderboard();
+        }
+
+        /* ----------------------------------------------------
+           6. XP & LEVELING SYSTEM
+           ---------------------------------------------------- */
+        function addXP(amount) {
+            gameState.xp += amount;
+            checkLevelProgression();
+            updateUIHeader();
+        }
+
+        function checkLevelProgression() {
+            let currentLevelObj = LEVEL_THRESHOLDS[0];
+            for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+                if (gameState.xp >= LEVEL_THRESHOLDS[i].xpReq) {
+                    currentLevelObj = LEVEL_THRESHOLDS[i];
+                    break;
+                }
+            }
+
+            if (currentLevelObj.lvl > gameState.level) {
+                gameState.level = currentLevelObj.lvl;
+                gameState.powerups.hints += 1;
+                triggerLevelUpModal(currentLevelObj);
+            }
+        }
+
+        function triggerLevelUpModal(lvlObj) {
+            playSound('levelup');
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+            document.getElementById('modal-level-name').innerText = `L${lvlObj.lvl}: ${lvlObj.name}`;
+            document.getElementById('modal-level-desc').innerText = `Rewards Unlocked: +1 Hint Lens Powerup, +1 Time Freeze & Detective Status Boost!`;
+            document.getElementById('level-modal').classList.remove('hidden');
+        }
+
+        function closeLevelModal() {
+            playSound('click');
+            document.getElementById('level-modal').classList.add('hidden');
+            updateUIHeader();
+        }
+
+        function updateUIHeader() {
+            // Find next level target
+            let currentLvlObj = LEVEL_THRESHOLDS.find(l => l.lvl === gameState.level) || LEVEL_THRESHOLDS[0];
+            let nextLvlObj = LEVEL_THRESHOLDS.find(l => l.lvl === gameState.level + 1) || currentLvlObj;
+
+            document.getElementById('user-level-title').innerText = `Lvl ${gameState.level} ${currentLvlObj.name}`;
+            document.getElementById('current-xp').innerText = gameState.xp;
+            document.getElementById('next-level-xp').innerText = `${nextLvlObj.xpReq} XP`;
+
+            let prevReq = currentLvlObj.xpReq;
+            let nextReq = nextLvlObj.xpReq;
+            let progress = 100;
+            if (nextReq > prevReq) {
+                progress = Math.min(100, Math.max(0, ((gameState.xp - prevReq) / (nextReq - prevReq)) * 100));
+            }
+            document.getElementById('xp-bar').style.width = `${progress}%`;
+
+            // Powerups
+            document.getElementById('hdr-hints').innerText = gameState.powerups.hints;
+            document.getElementById('hdr-freezes').innerText = gameState.powerups.freezes;
+            document.getElementById('p-hint-count').innerText = gameState.powerups.hints;
+            document.getElementById('p-freeze-count').innerText = gameState.powerups.freezes;
+
+            // Stats
+            document.getElementById('dash-solved-count').innerText = gameState.solvedCount;
+            document.getElementById('rank-badge-pill').innerText = `Lvl ${gameState.level}`;
+
+            // Highlight current level in rank map
+            for (let i = 1; i <= 10; i++) {
+                const stepEl = document.getElementById(`rank-step-${i}`);
+                if (stepEl) {
+                    if (i === gameState.level) {
+                        stepEl.className = "p-2 rounded-lg bg-brand-cyan/20 border border-brand-cyan text-brand-cyan font-bold";
+                    } else if (i < gameState.level) {
+                        stepEl.className = "p-2 rounded-lg bg-emerald-950/30 border border-emerald-800 text-emerald-400 opacity-70";
+                    } else {
+                        stepEl.className = "p-2 rounded-lg bg-slate-900/50 border border-slate-800 text-slate-500";
+                    }
+                }
+            }
+        }
+
+        /* ----------------------------------------------------
+           7. MYSTERY MODE ENGINE
+           ---------------------------------------------------- */
+        function selectMysterySubject(sub) {
+            playSound('click');
+            gameState.mysterySubject = sub;
+            gameState.mysteryStep = 1; // Always start at Step 1
+            gameState.mysteryLives = 3;
+            gameState.mysteryCluesLeft = 2;
+            gameState.revealedClues = [];
+
+            document.querySelectorAll('.msub-btn').forEach(btn => {
+                btn.className = "msub-btn px-4 py-2 rounded-xl border border-brand-cardBorder bg-brand-card text-slate-400 hover:text-white font-bold text-xs flex items-center gap-2";
+            });
+            document.getElementById(`msub-${sub}`).className = "msub-btn px-4 py-2 rounded-xl border border-brand-cyan/40 bg-brand-cyan/20 text-brand-cyan font-bold text-xs flex items-center gap-2";
+
+            loadMysteryCase();
+        }
+
+        function loadMysteryCase() {
+            const casesList = MYSTERY_DATABASE[gameState.mysterySubject];
+            const currentCase = casesList.find(c => c.step === gameState.mysteryStep) || casesList[0];
+
+            // Update Stepper Visuals
+            for (let i = 1; i <= 5; i++) {
+                const node = document.getElementById(`step-node-${i}`);
+                if (node) {
+                    if (i === gameState.mysteryStep) {
+                        node.className = "flex flex-col items-center text-brand-cyan font-bold";
+                        node.children[0].className = "w-8 h-8 rounded-full border-2 border-brand-cyan bg-brand-cyan/20 flex items-center justify-center font-orbitron mb-1 shadow-lg shadow-brand-cyan/30";
+                    } else if (i < gameState.mysteryStep) {
+                        node.className = "flex flex-col items-center text-emerald-400 font-semibold";
+                        node.children[0].className = "w-8 h-8 rounded-full border-2 border-emerald-400 bg-emerald-950 flex items-center justify-center font-orbitron mb-1";
+                    } else {
+                        node.className = "flex flex-col items-center text-slate-500";
+                        node.children[0].className = "w-8 h-8 rounded-full border-2 border-slate-700 bg-slate-800 flex items-center justify-center font-orbitron mb-1";
+                    }
+                }
+            }
+
+            // Case Details
+            document.getElementById('case-badge-step').innerText = `STEP ${gameState.mysteryStep} : CASE #0${gameState.mysteryStep}`;
+            document.getElementById('case-title').innerText = currentCase.title;
+            document.getElementById('case-story').innerText = `"${currentCase.story}"`;
+            document.getElementById('case-question').innerText = currentCase.question;
+
+            // Render Clues state
+            document.getElementById('clues-left-count').innerText = gameState.mysteryCluesLeft;
+            const cluesBox = document.getElementById('case-clues-box');
+            const cluesList = document.getElementById('case-clues-list');
+            cluesList.innerHTML = '';
+            if (gameState.revealedClues.length > 0) {
+                cluesBox.classList.remove('hidden');
+                gameState.revealedClues.forEach(c => {
+                    const li = document.createElement('li');
+                    li.innerText = c;
+                    cluesList.appendChild(li);
+                });
+            } else {
+                cluesBox.classList.add('hidden');
+            }
+
+            // Hearts
+            updateHeartsUI();
+
+            // Options
+            const optGrid = document.getElementById('case-options');
+            optGrid.innerHTML = '';
+            currentCase.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-brand-cyan text-left text-xs font-semibold text-white transition-all flex items-center justify-between";
+                btn.innerHTML = `<span>${optText}</span> <i class="fa-solid fa-chevron-right text-slate-600 text-xs"></i>`;
+                btn.onclick = () => checkCaseAnswer(idx, currentCase.correct, currentCase.explanation);
+                optGrid.appendChild(btn);
+            });
+
+            document.getElementById('case-feedback').classList.add('hidden');
+        }
+
+        function updateHeartsUI() {
+            for (let i = 1; i <= 3; i++) {
+                const heart = document.getElementById(`heart-${i}`);
+                if (i <= gameState.mysteryLives) {
+                    heart.className = "fa-solid fa-heart text-red-500 text-sm";
+                } else {
+                    heart.className = "fa-regular fa-heart text-slate-600 text-sm";
+                }
+            }
+        }
+
+        function revealCaseClue() {
+            if (gameState.mysteryCluesLeft <= 0) return;
+            const casesList = MYSTERY_DATABASE[gameState.mysterySubject];
+            const currentCase = casesList.find(c => c.step === gameState.mysteryStep);
+
+            const clueIdx = 2 - gameState.mysteryCluesLeft;
+            if (currentCase.clues[clueIdx]) {
+                playSound('click');
+                gameState.mysteryCluesLeft--;
+                gameState.revealedClues.push(currentCase.clues[clueIdx]);
+                loadMysteryCase();
+            }
+        }
+
+        function checkCaseAnswer(selectedIdx, correctIdx, explanation) {
+            const fbBox = document.getElementById('case-feedback');
+            const fbText = document.getElementById('case-feedback-text');
+            const nextBtn = document.getElementById('case-next-btn');
+
+            fbBox.classList.remove('hidden');
+
+            if (selectedIdx === correctIdx) {
+                playSound('correct');
+                fbBox.className = "mt-6 p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/40 text-emerald-300 text-sm flex items-center justify-between";
+                fbText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i> ${explanation} (+100 XP)`;
+                addXP(100);
+                gameState.solvedCount++;
+
+                if (gameState.mysteryStep < 5) {
+                    nextBtn.innerText = "Advance to Step " + (gameState.mysteryStep + 1);
+                    nextBtn.classList.remove('hidden');
+                } else {
+                    nextBtn.innerText = "Case Step Completed! 🎉";
+                    nextBtn.classList.remove('hidden');
+                    confetti({ particleCount: 80, spread: 60 });
+                }
+            } else {
+                playSound('wrong');
+                gameState.mysteryLives--;
+                updateHeartsUI();
+
+                if (gameState.mysteryLives > 0) {
+                    fbBox.className = "mt-6 p-4 rounded-xl border border-rose-500/50 bg-rose-950/40 text-rose-300 text-sm flex items-center justify-between";
+                    fbText.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400 mr-2"></i> Incorrect clue deduction! Try again. (${gameState.mysteryLives} lives remain)`;
+                    nextBtn.classList.add('hidden');
+                } else {
+                    fbBox.className = "mt-6 p-4 rounded-xl border border-rose-500/50 bg-rose-950/40 text-rose-300 text-sm flex items-center justify-between";
+                    fbText.innerHTML = `<i class="fa-solid fa-skull text-rose-400 mr-2"></i> Case Failed! Resetting Step 1 for this subject...`;
+                    nextBtn.innerText = "Restart Case #01";
+                    nextBtn.classList.remove('hidden');
+                    gameState.mysteryStep = 1;
+                    gameState.mysteryLives = 3;
+                }
+            }
+            updateUIHeader();
+        }
+
+        function nextMysteryStep() {
+            playSound('click');
+            if (gameState.mysteryLives > 0 && gameState.mysteryStep < 5) {
+                gameState.mysteryStep++;
+            } else {
+                gameState.mysteryStep = 1;
+            }
+            gameState.mysteryLives = 3;
+            gameState.mysteryCluesLeft = 2;
+            gameState.revealedClues = [];
+            loadMysteryCase();
+        }
+
+        /* ----------------------------------------------------
+           8. BRAIN BATTLE & POWERUPS
+           ---------------------------------------------------- */
+        let bbState = { idx: 0, timer: 30, timerId: null, subject: 'science' };
+
+        function resetBrainBattle() {
+            bbState.subject = document.getElementById('bb-subject-select').value;
+            bbState.idx = 0;
+            loadBrainQuestion();
+        }
+
+        function loadBrainQuestion() {
+            clearInterval(bbState.timerId);
+            bbState.timer = 30;
+
+            const qList = BRAIN_BATTLE_QUESTIONS[bbState.subject];
+            if (bbState.idx >= qList.length) {
+                // Battle Completed
+                document.getElementById('bb-question-text').innerText = "🏆 Brain Battle Cleared! You defeated all 5 stages.";
+                document.getElementById('bb-options-grid').innerHTML = '';
+                document.getElementById('bb-feedback').classList.add('hidden');
+                document.getElementById('bb-next-btn').classList.add('hidden');
+                addXP(150);
+                confetti({ particleCount: 70 });
+                return;
+            }
+
+            const currQ = qList[bbState.idx];
+            document.getElementById('bb-question-num').innerText = `STAGE ${bbState.idx + 1} / ${qList.length}`;
+            document.getElementById('bb-question-text').innerText = currQ.q;
+            document.getElementById('bb-feedback').classList.add('hidden');
+            document.getElementById('bb-next-btn').classList.add('hidden');
+
+            const optGrid = document.getElementById('bb-options-grid');
+            optGrid.innerHTML = '';
+            currQ.opts.forEach((oText, i) => {
+                const btn = document.createElement('button');
+                btn.className = "bb-opt-btn p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-brand-gold text-left text-xs font-semibold text-white transition-all";
+                btn.innerText = oText;
+                btn.onclick = () => answerBrainQuestion(i, currQ.ans);
+                optGrid.appendChild(btn);
+            });
+
+            // Timer loop
+            bbState.timerId = setInterval(() => {
+                bbState.timer--;
+                document.getElementById('bb-timer').innerText = `⏱️ ${bbState.timer}s`;
+                if (bbState.timer <= 0) {
+                    clearInterval(bbState.timerId);
+                    answerBrainQuestion(-1, currQ.ans);
+                }
+            }, 1000);
+        }
+
+        function answerBrainQuestion(selected, correct) {
+            clearInterval(bbState.timerId);
+            const fb = document.getElementById('bb-feedback');
+            fb.classList.remove('hidden');
+
+            if (selected === correct) {
+                playSound('correct');
+                fb.className = "p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-bold";
+                fb.innerText = "⚡ Correct Answer! Stage Cleared (+40 XP)";
+                addXP(40);
+            } else {
+                playSound('wrong');
+                fb.className = "p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-300 text-xs font-bold";
+                fb.innerText = "❌ Incorrect or Time Expired!";
+            }
+
+            document.getElementById('bb-next-btn').classList.remove('hidden');
+        }
+
+        function nextBrainQuestion() {
+            playSound('click');
+            bbState.idx++;
+            loadBrainQuestion();
+        }
+
+        function usePowerup(type) {
+            if (type === 'hint' && gameState.powerups.hints > 0) {
+                gameState.powerups.hints--;
+                playSound('click');
+                const qList = BRAIN_BATTLE_QUESTIONS[bbState.subject];
+                const currQ = qList[bbState.idx];
+                const btns = document.querySelectorAll('.bb-opt-btn');
+                let count = 0;
+                btns.forEach((btn, i) => {
+                    if (i !== currQ.ans && count < 2) {
+                        btn.style.opacity = '0.3';
+                        btn.disabled = true;
+                        count++;
+                    }
+                });
+            } else if (type === 'freeze' && gameState.powerups.freezes > 0) {
+                gameState.powerups.freezes--;
+                playSound('click');
+                bbState.timer += 15;
+                document.getElementById('bb-timer').innerText = `⏱️ ${bbState.timer}s (FROZEN)`;
+            }
+            updateUIHeader();
+        }
+
+        /* ----------------------------------------------------
+           9. AI VISION SCANNER
+           ---------------------------------------------------- */
+        const VISION_SAMPLES = {
+            leaf: {
+                title: "Plant Stomata & Photosynthesis",
+                tag: "Biology - Ch. 5",
+                img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=600&q=80",
+                text: "<strong>Concept Breakdown:</strong> Stomata are tiny pores located on leaf epidermis surrounded by Guard Cells.<br><br><strong>Key Functions:</strong> Gas exchange (CO₂ in, O₂ out) and Transpiration regulation."
+            },
+            math: {
+                title: "Right-Angled Triangle Geometry",
+                tag: "Math - Pythagoras",
+                img: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=600&q=80",
+                text: "<strong>Concept Breakdown:</strong> Right Triangle theorem states <em>a² + b² = c²</em>.<br><br><strong>Key Application:</strong> Used for computing heights, distances, and vectors."
+            },
+            sst: {
+                title: "The Constitution Preamble",
+                tag: "Civics - Ch. 2",
+                img: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80",
+                text: "<strong>Concept Breakdown:</strong> Contains foundational principles: Sovereign, Socialist, Secular, Democratic Republic.<br><br><strong>Key Purpose:</strong> Ensures Justice, Liberty, Equality, and Fraternity."
+            },
+            english: {
+                title: "Poetic Metaphors & Literary Devices",
+                tag: "English Literature",
+                img: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80",
+                text: "<strong>Concept Breakdown:</strong> Direct comparison without using 'like' or 'as'.<br><br><strong>Example:</strong> 'The road was a ribbon of moonlight.'"
+            }
+        };
+
+        function scanSample(key) {
+            playSound('click');
+            const data = VISION_SAMPLES[key];
+            document.getElementById('vision-title').innerText = data.title;
+            document.getElementById('vision-tag').innerText = data.tag;
+            
+            const imgEl = document.getElementById('vision-preview-img');
+            imgEl.src = data.img;
+            imgEl.classList.remove('hidden');
+            document.getElementById('vision-placeholder-icon').classList.add('hidden');
+
+            document.getElementById('vision-analysis-body').innerHTML = data.text;
+            document.getElementById('vision-actions').classList.remove('hidden');
+            addXP(20);
+        }
+
+        function handleFileUpload(evt) {
+            const file = evt.target.files[0];
+            if (file) {
+                playSound('click');
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgEl = document.getElementById('vision-preview-img');
+                    imgEl.src = e.target.result;
+                    imgEl.classList.remove('hidden');
+                    document.getElementById('vision-placeholder-icon').classList.add('hidden');
+
+                    document.getElementById('vision-title').innerText = "Custom Diagram Analysis";
+                    document.getElementById('vision-tag').innerText = "AI Vision Scan";
+                    document.getElementById('vision-analysis-body').innerHTML = "<strong>AI Image Analysis:</strong> High contrast diagram detected. Key labels detected for Class 9 study notes.<br><br><strong>AI Recommendation:</strong> Practice sketching this diagram for 5-mark exam questions.";
+                    document.getElementById('vision-actions').classList.remove('hidden');
+                    addXP(30);
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function visionExplainMore() {
+            playSound('click');
+            document.getElementById('vision-analysis-body').innerHTML += "<br><br><strong>Detailed Deep-Dive:</strong> Remember to revise the corresponding Class 9 textbook chapter definitions and formula applications!";
+        }
+
+        function visionRealExample() {
+            playSound('click');
+            document.getElementById('vision-analysis-body').innerHTML += "<br><br><strong>Real-Life Example:</strong> Engineers use this exact principle when building modern bridges and solar panels!";
+        }
+
+        /* ----------------------------------------------------
+           10. FLASHCARDS ARENA
+           ---------------------------------------------------- */
+        let fcState = { sub: 'science', idx: 0, flipped: false };
+
+        function loadFlashcardSubject(sub) {
+            playSound('click');
+            fcState.sub = sub;
+            fcState.idx = 0;
+            fcState.flipped = false;
+            updateFlashcardUI();
+        }
+
+        function updateFlashcardUI() {
+            const list = FLASHCARD_DATA[fcState.sub] || FLASHCARD_DATA['science'];
+            const item = list[fcState.idx];
+
+            document.getElementById('fc-category').innerText = `${fcState.sub.toUpperCase()} FLASHCARD`;
+            document.getElementById('fc-question').innerText = item.q;
+            document.getElementById('fc-answer').innerText = item.a;
+            document.getElementById('fc-counter').innerText = `${fcState.idx + 1} / ${list.length}`;
+
+            const cardInner = document.getElementById('flashcard-inner');
+            if (fcState.flipped) {
+                cardInner.classList.add('rotate-y-180');
+            } else {
+                cardInner.classList.remove('rotate-y-180');
+            }
+        }
+
+        function flipFlashcard() {
+            playSound('click');
+            fcState.flipped = !fcState.flipped;
+            updateFlashcardUI();
+            if (fcState.flipped) addXP(10);
+        }
+
+        function nextFlashcard() {
+            playSound('click');
+            const list = FLASHCARD_DATA[fcState.sub];
+            fcState.idx = (fcState.idx + 1) % list.length;
+            fcState.flipped = false;
+            updateFlashcardUI();
+        }
+
+        function prevFlashcard() {
+            playSound('click');
+            const list = FLASHCARD_DATA[fcState.sub];
+            fcState.idx = (fcState.idx - 1 + list.length) % list.length;
+            fcState.flipped = false;
+            updateFlashcardUI();
+        }
+
+        /* ----------------------------------------------------
+           11. STUDY DOCTOR TIMER
+           ---------------------------------------------------- */
+        let timerState = { seconds: 1500, running: false, interval: null };
+
+        function generateTimetable() {
+            playSound('click');
+            const sub = document.getElementById('sd-subject').value;
+            const hours = document.getElementById('sd-hours').value;
+            const days = document.getElementById('sd-days').value;
+
+            const out = document.getElementById('timetable-output');
+            const body = document.getElementById('timetable-body');
+            out.classList.remove('hidden');
+
+            body.innerHTML = `
+                <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
+                    <strong>Prescription for ${sub}:</strong> Dedicated ${hours} hrs/day for ${days} days.<br>
+                    • <strong>Phase 1 (Days 1-${Math.ceil(days/2)}):</strong> Chapter Concept Reading & Case Mysteries.<br>
+                    • <strong>Phase 2 (Days ${Math.ceil(days/2)+1}-${days}):</strong> Formula Flashcards & Brain Battle AI Quizzes.
+                </div>
+            `;
+            addXP(25);
+        }
+
+        function toggleStudyTimer() {
+            playSound('click');
+            const btn = document.getElementById('timer-toggle-btn');
+            if (timerState.running) {
+                clearInterval(timerState.interval);
+                timerState.running = false;
+                btn.innerHTML = `<i class="fa-solid fa-play mr-1"></i> Start Focus Timer`;
+            } else {
+                timerState.running = true;
+                btn.innerHTML = `<i class="fa-solid fa-pause mr-1"></i> Pause Timer`;
+                timerState.interval = setInterval(() => {
+                    if (timerState.seconds > 0) {
+                        timerState.seconds--;
+                        formatTimerDisplay();
+                    } else {
+                        clearInterval(timerState.interval);
+                        timerState.running = false;
+                        playSound('levelup');
+                        addXP(50);
+                        alert("Sprint Completed! +50 XP Awarded!");
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetStudyTimer() {
+            playSound('click');
+            clearInterval(timerState.interval);
+            timerState.running = false;
+            timerState.seconds = 1500;
+            formatTimerDisplay();
+            document.getElementById('timer-toggle-btn').innerHTML = `<i class="fa-solid fa-play mr-1"></i> Start Focus Timer`;
+        }
+
+        function formatTimerDisplay() {
+            const mins = Math.floor(timerState.seconds / 60);
+            const secs = timerState.seconds % 60;
+            document.getElementById('timer-display').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        /* ----------------------------------------------------
+           12. DAILY QUESTS & LEADERBOARD RIVALS
+           ---------------------------------------------------- */
+        const DAILY_QUESTS = [
+            { id: 0, text: "Solve Step 1 Mystery Case in any Subject", xp: 100 },
+            { id: 1, text: "Score 100% in a Brain Battle Stage", xp: 80 },
+            { id: 2, text: "Flip and study 3 Revision Flashcards", xp: 50 }
+        ];
+
+        function renderDailyQuests() {
+            const list = document.getElementById('quest-list');
+            list.innerHTML = '';
+            let completedCount = 0;
+
+            DAILY_QUESTS.forEach((q, idx) => {
+                const done = gameState.completedQuests[idx];
+                if (done) completedCount++;
+
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-xl border flex items-center justify-between ${done ? 'bg-emerald-950/30 border-emerald-800 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-200'}`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="${done ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-regular fa-circle text-slate-500'} text-base"></i>
+                        <span class="text-xs font-semibold">${q.text}</span>
+                    </div>
+                    <button onclick="claimQuest(${idx})" ${done ? 'disabled' : ''} class="${done ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-700' : 'bg-brand-gold text-slate-950 hover:brightness-110'} text-[11px] font-bold px-3 py-1.5 rounded-lg transition-colors">
+                        ${done ? 'Claimed' : `+${q.xp} XP`}
+                    </button>
+                `;
+                list.appendChild(div);
+            });
+
+            document.getElementById('dash-quest-count').innerText = `${completedCount}/3`;
+        }
+
+        function claimQuest(idx) {
+            if (!gameState.completedQuests[idx]) {
+                playSound('correct');
+                gameState.completedQuests[idx] = true;
+                addXP(DAILY_QUESTS[idx].xp);
+                renderDailyQuests();
+            }
+        }
+
+        function renderLeaderboard() {
+            const rivals = [
+                { name: "Ananya P.", lvl: 5, xp: 1420 },
+                { name: "Rohan S.", lvl: 4, xp: 950 },
+                { name: "You (Student)", lvl: gameState.level, xp: gameState.xp },
+                { name: "Kabir M.", lvl: 2, xp: 310 },
+                { name: "Sara K.", lvl: 1, xp: 120 }
+            ];
+
+            rivals.sort((a, b) => b.xp - a.xp);
+
+            const container = document.getElementById('leaderboard-list');
+            container.innerHTML = '';
+
+            rivals.forEach((r, idx) => {
+                const isYou = r.name.includes("You");
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl border flex items-center justify-between ${isYou ? 'bg-brand-cyan/20 border-brand-cyan text-brand-cyan shadow-lg' : 'bg-slate-900/80 border-slate-800 text-white'}`;
+                
+                let rankBadge = `<span class="font-orbitron font-bold text-slate-400 w-6">#${idx + 1}</span>`;
+                if (idx === 0) rankBadge = `<i class="fa-solid fa-trophy text-amber-400 text-lg w-6"></i>`;
+                if (idx === 1) rankBadge = `<i class="fa-solid fa-trophy text-slate-300 text-lg w-6"></i>`;
+                if (idx === 2) rankBadge = `<i class="fa-solid fa-trophy text-amber-700 text-lg w-6"></i>`;
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        ${rankBadge}
+                        <div>
+                            <div class="text-xs font-bold">${r.name}</div>
+                            <div class="text-[10px] text-slate-400">Level ${r.lvl}</div>
+                        </div>
+                    </div>
+                    <span class="font-orbitron font-bold text-xs text-brand-gold">${r.xp} XP</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        /* ----------------------------------------------------
+           13. INITIALIZATION ON WINDOW LOAD
+           ---------------------------------------------------- */
+        window.onload = function() {
+            updateUIHeader();
+            renderDailyQuests();
+        };
+    </script>
+</body>
+</html>
